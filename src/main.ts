@@ -12,9 +12,9 @@ async function run(): Promise<void> {
         `${process.platform} is not support, only windows is support!`
       )
     }
-    const installedLocation = String.raw`"${installation_location}\AutoIt3"`
+    const installedLocation = String.raw`${installation_location}\AutoIt3`
     const cacheKey = `${process.platform}-autoit3-${installedLocation}`
-    core.info(`cache.restoreCache([{${installedLocation}}], ${cacheKey})`)
+    core.info(`cache.restoreCache([${installedLocation}], ${cacheKey})`)
     const restoreCode = await cache.restoreCache([installedLocation], cacheKey)
     if (restoreCode) {
       core.info(`cache.restoreCache hits! result: ${restoreCode}`)
@@ -33,7 +33,7 @@ async function run(): Promise<void> {
       }
       try {
         core.info(`Saving cache: ${cacheKey}`)
-        core.info(`cache.saveCache([{${installedLocation}}], ${cacheKey})`)
+        core.info(`cache.saveCache([${installedLocation}], ${cacheKey})`)
         const saveCacheResult = await cache.saveCache(
           [installedLocation],
           cacheKey
