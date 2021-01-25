@@ -5,7 +5,7 @@ inputs:
   installation_location:
     required: true
     description: 'The location of autoit installation'
-    default: 'C:\Program Files (x86)\'
+    default: C:\Program Files (x86)
 runs:
   using: 'node12'
   main: 'dist/index.js'

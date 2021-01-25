@@ -48,34 +48,35 @@ function run() {
             if (process.platform !== 'win32') {
                 return core.setFailed(`${process.platform} is not support, only windows is support!`);
             }
-            const installedLocation = String.raw `"C:\Program Files (x86)\AutoIt3"`;
-            const cacheKey = `autoit3-${process.platform}`;
+            const installedLocation = String.raw `"${installation_location}\AutoIt3"`;
+            const cacheKey = `autoit3-${process.platform}-${installedLocation}`;
             const restoreCode = yield cache.restoreCache([installedLocation], cacheKey);
             if (restoreCode) {
-                core.setOutput('installed_location', installedLocation);
-                return core.info('cache.restoreCache hits!');
+                core.info('cache.restoreCache hits!');
             }
-            // extract the prepared autoit achieve (resources\AutoIt3.zip)
-            core.debug('Starting autoIt install!');
-            const exitCode = yield exec_1.exec(String.raw `"C:\Program Files\7-Zip\7z.exe"`, [
-                `x`,
-                String.raw `resources\AutoIt3.zip`,
-                String.raw `-o${installation_location}`
-            ]);
-            core.debug(`extract exitCode: ${exitCode}!`);
-            if (exitCode !== 0) {
-                return core.setFailed(`extract AutoIt3.zip failed!`);
+            else {
+                // extract the prepared autoit achieve (resources\AutoIt3.zip)
+                core.debug('Starting autoIt install!');
+                const exitCode = yield exec_1.exec(String.raw `"C:\Program Files\7-Zip\7z.exe"`, [
+                    `x`,
+                    String.raw `resources\AutoIt3.zip`,
+                    String.raw `-o${installation_location}`
+                ]);
+                core.debug(`extract exitCode: ${exitCode}!`);
+                if (exitCode !== 0) {
+                    return core.setFailed(`extract AutoIt3.zip failed!`);
+                }
+                try {
+                    core.debug(`Saving cache: ${cacheKey}`);
+                    yield cache.saveCache([installedLocation], cacheKey);
+                }
+                catch (error) {
+                    core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);
+                }
             }
+            core.debug(`addPath: ${installedLocation}`);
             core.addPath(installedLocation);
             core.setOutput('installed_location', installedLocation);
-            core.debug(`Saving cache: ${cacheKey}`);
-            try {
-                yield cache.saveCache([installedLocation], cacheKey);
-                core.error(`Save cache failed on key ${cacheKey}.`);
-            }
-            catch (error) {
-                core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);
-            }
         }
         catch (error) {
             core.setFailed(error.message);

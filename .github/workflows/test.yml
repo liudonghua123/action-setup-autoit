@@ -20,8 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: ./
-        with:
-          installation_location: C:\Program Files (x86)
       - name: Display the path
         shell: cmd
         run: |
