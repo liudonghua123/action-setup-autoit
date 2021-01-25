@@ -1,11 +1,11 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'action-setup-autoit'
+description: 'A simple of autoit version 3 github setup action'
+author: 'liudonghua'
 inputs:
-  milliseconds: # change this
+  installation_location:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'The location of autoit installation'
+    default: 'C:\Program Files (x86)\'
 runs:
   using: 'node12'
   main: 'dist/index.js'
