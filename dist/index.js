@@ -49,12 +49,14 @@ function run() {
                 return core.setFailed(`${process.platform} is not support, only windows is support!`);
             }
             const installedLocation = String.raw `"${installation_location}\AutoIt3"`;
-            const cacheKey = `${process.platform}-${installedLocation}-autoit3`;
+            const cacheKey = `${process.platform}-autoit3-${installedLocation}`;
+            core.info(`cache.restoreCache([{${installedLocation}}], ${cacheKey})`);
             const restoreCode = yield cache.restoreCache([installedLocation], cacheKey);
             if (restoreCode) {
-                core.info('cache.restoreCache hits!');
+                core.info(`cache.restoreCache hits! result: ${restoreCode}`);
             }
             else {
+                core.info(`cache.restoreCache miss!`);
                 // extract the prepared autoit achieve (resources\AutoIt3.zip)
                 core.info('Starting autoIt install!');
                 const exitCode = yield exec_1.exec(String.raw `"C:\Program Files\7-Zip\7z.exe"`, [
@@ -68,7 +70,8 @@ function run() {
                 }
                 try {
                     core.info(`Saving cache: ${cacheKey}`);
-                    yield cache.saveCache([installedLocation], cacheKey);
+                    const saveCacheResult = yield cache.saveCache([installedLocation], cacheKey);
+                    core.info(`Saving cache result: ${saveCacheResult}`);
                 }
                 catch (error) {
                     core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`);

@@ -13,11 +13,13 @@ async function run(): Promise<void> {
       )
     }
     const installedLocation = String.raw`"${installation_location}\AutoIt3"`
-    const cacheKey = `${process.platform}-${installedLocation}-autoit3`
+    const cacheKey = `${process.platform}-autoit3-${installedLocation}`
+    core.info(`cache.restoreCache([{${installedLocation}}], ${cacheKey})`)
     const restoreCode = await cache.restoreCache([installedLocation], cacheKey)
     if (restoreCode) {
-      core.info('cache.restoreCache hits!')
+      core.info(`cache.restoreCache hits! result: ${restoreCode}`)
     } else {
+      core.info(`cache.restoreCache miss!`)
       // extract the prepared autoit achieve (resources\AutoIt3.zip)
       core.info('Starting autoIt install!')
       const exitCode = await exec(String.raw`"C:\Program Files\7-Zip\7z.exe"`, [
@@ -31,7 +33,11 @@ async function run(): Promise<void> {
       }
       try {
         core.info(`Saving cache: ${cacheKey}`)
-        await cache.saveCache([installedLocation], cacheKey)
+        const saveCacheResult = await cache.saveCache(
+          [installedLocation],
+          cacheKey
+        )
+        core.info(`Saving cache result: ${saveCacheResult}`)
       } catch (error) {
         core.info(`Cache hit occurred on key ${cacheKey}, not saving cache.`)
       }
