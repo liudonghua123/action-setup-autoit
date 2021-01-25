@@ -70,6 +70,7 @@ function run() {
                 }
                 try {
                     core.info(`Saving cache: ${cacheKey}`);
+                    core.info(`cache.saveCache([{${installedLocation}}], ${cacheKey})`);
                     const saveCacheResult = yield cache.saveCache([installedLocation], cacheKey);
                     core.info(`Saving cache result: ${saveCacheResult}`);
                 }

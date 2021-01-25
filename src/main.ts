@@ -33,6 +33,7 @@ async function run(): Promise<void> {
       }
       try {
         core.info(`Saving cache: ${cacheKey}`)
+        core.info(`cache.saveCache([{${installedLocation}}], ${cacheKey})`)
         const saveCacheResult = await cache.saveCache(
           [installedLocation],
           cacheKey
