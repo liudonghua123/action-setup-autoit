@@ -48,8 +48,7 @@ function install(url, fileName) {
         core.info(`Got download achieve: ${program}`);
         fs_1.promises.rename(program, fileName);
         core.info('Starting install!');
-        yield exec_1.exec(`dir`);
-        const exitCode = yield exec_1.exec(`"${fileName}"`, [`/S`, `/f`]);
+        const exitCode = yield exec_1.exec(`.\\"${fileName}"`, [`/S`, `/f`]);
         core.info(`install exitCode: ${exitCode}!`);
         return exitCode;
     });

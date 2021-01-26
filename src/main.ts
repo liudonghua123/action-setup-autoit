@@ -10,8 +10,7 @@ async function install(url: string, fileName: string): Promise<number> {
   core.info(`Got download achieve: ${program}`)
   fs.rename(program, fileName)
   core.info('Starting install!')
-  await exec(`dir`)
-  const exitCode = await exec(`"${fileName}"`, [`/S`, `/f`])
+  const exitCode = await exec(`.\\"${fileName}"`, [`/S`, `/f`])
   core.info(`install exitCode: ${exitCode}!`)
   return exitCode
 }
