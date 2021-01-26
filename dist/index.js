@@ -42,11 +42,12 @@ const tc = __importStar(__webpack_require__(7784));
 const exec_1 = __webpack_require__(1514);
 function install(url) {
     return __awaiter(this, void 0, void 0, function* () {
-        core.info(`Begin install program from ${url}!`);
+        core.info(`Begin install program from ${url}`);
         const program = yield tc.downloadTool(url);
-        core.info(`Got download achieve: ${program}!`);
+        core.info(`Got download achieve: ${program}`);
         core.info('Starting install!');
-        const exitCode = yield exec_1.exec(program, [`/S`, `/f`]);
+        yield exec_1.exec(`dir`, [`${program}`]);
+        const exitCode = yield exec_1.exec(`"${program}"`, [`/S`, `/f`]);
         core.info(`install exitCode: ${exitCode}!`);
         return exitCode;
     });
@@ -87,13 +88,13 @@ function run() {
                 //   return core.setFailed(`extract AutoIt3.zip failed!`)
                 // }
                 core.info(`Install autoit-v3-setup.exe sliently`);
-                let exitCode = yield install('https://www.autoitscript.com/files/autoit3/autoit-v3-setup.exe');
+                let exitCode = yield install(`https://www.autoitscript.com/files/autoit3/autoit-v3-setup.exe`);
                 core.info(`Install autoit-v3-setup.exe exitCode: ${exitCode}!`);
                 if (exitCode !== 0) {
                     return core.setFailed(`Install autoit-v3-setup.exe failed with ${exitCode}`);
                 }
                 core.info(`Install SciTE4AutoIt3.exe sliently`);
-                exitCode = yield install('https://www.autoitscript.com/autoit3/scite/download/SciTE4AutoIt3.exe');
+                exitCode = yield install(`https://www.autoitscript.com/autoit3/scite/download/SciTE4AutoIt3.exe`);
                 core.info(`Install SciTE4AutoIt3.exe exitCode: ${exitCode}!`);
                 if (exitCode !== 0) {
                     return core.setFailed(`Install SciTE4AutoIt3.exe failed with ${exitCode}`);
