@@ -1,6 +1,6 @@
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
-import {exec} from '@actions/exec'
+import * as tc from '@actions/tool-cache'
 
 async function run(): Promise<void> {
   try {
@@ -13,7 +13,7 @@ async function run(): Promise<void> {
       )
     }
     const installedLocation = String.raw`${installation_location}\AutoIt3`
-    const cacheKey = `${process.platform}-autoit3-${installedLocation}`
+    const cacheKey = `${process.platform}-autoit-3-${installedLocation}`
     core.info(`cache.restoreCache([${installedLocation}], ${cacheKey})`)
     const restoreCode = await cache.restoreCache([installedLocation], cacheKey)
     if (restoreCode) {
@@ -21,16 +21,22 @@ async function run(): Promise<void> {
     } else {
       core.info(`cache.restoreCache miss!`)
       // extract the prepared autoit achieve (resources\AutoIt3.zip)
+      // download the achieve
+      const autoIt3Achieve = await tc.downloadTool(
+        'https://github.com/liudonghua123/action-setup-autoit/raw/main/resources/AutoIt3.zip'
+      )
+      core.info(`Got download achieve: ${autoIt3Achieve}!`)
       core.info('Starting autoIt install!')
-      const exitCode = await exec(String.raw`"C:\Program Files\7-Zip\7z.exe"`, [
-        `x`,
-        String.raw`resources\AutoIt3.zip`,
-        String.raw`-o${installation_location}`
-      ])
-      core.info(`extract exitCode: ${exitCode}!`)
-      if (exitCode !== 0) {
-        return core.setFailed(`extract AutoIt3.zip failed!`)
-      }
+      await tc.extractZip(autoIt3Achieve, installation_location)
+      // const exitCode = await exec(String.raw`"C:\Program Files\7-Zip\7z.exe"`, [
+      //   `x`,
+      //   String.raw`resources\AutoIt3.zip`,
+      //   String.raw`-o${installation_location}`
+      // ])
+      // core.info(`extract exitCode: ${exitCode}!`)
+      // if (exitCode !== 0) {
+      //   return core.setFailed(`extract AutoIt3.zip failed!`)
+      // }
       try {
         core.info(`Saving cache: ${cacheKey}`)
         core.info(`cache.saveCache([${installedLocation}], ${cacheKey})`)
