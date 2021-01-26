@@ -2,14 +2,16 @@ import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
 import {exec} from '@actions/exec'
+import {promises as fs} from 'fs'
 
-async function install(url: string): Promise<number> {
+async function install(url: string, fileName: string): Promise<number> {
   core.info(`Begin install program from ${url}`)
   const program = await tc.downloadTool(url)
   core.info(`Got download achieve: ${program}`)
+  fs.rename(program, fileName)
   core.info('Starting install!')
-  await exec(`dir`, [`${program}`])
-  const exitCode = await exec(`"${program}"`, [`/S`, `/f`])
+  await exec(`dir`)
+  const exitCode = await exec(`"${fileName}"`, [`/S`, `/f`])
   core.info(`install exitCode: ${exitCode}!`)
   return exitCode
 }
@@ -52,7 +54,8 @@ async function run(): Promise<void> {
       // }
       core.info(`Install autoit-v3-setup.exe sliently`)
       let exitCode = await install(
-        `https://www.autoitscript.com/files/autoit3/autoit-v3-setup.exe`
+        `https://www.autoitscript.com/files/autoit3/autoit-v3-setup.exe`,
+        `autoit-v3-setup.exe`
       )
       core.info(`Install autoit-v3-setup.exe exitCode: ${exitCode}!`)
       if (exitCode !== 0) {
@@ -62,7 +65,8 @@ async function run(): Promise<void> {
       }
       core.info(`Install SciTE4AutoIt3.exe sliently`)
       exitCode = await install(
-        `https://www.autoitscript.com/autoit3/scite/download/SciTE4AutoIt3.exe`
+        `https://www.autoitscript.com/autoit3/scite/download/SciTE4AutoIt3.exe`,
+        `SciTE4AutoIt3.exe`
       )
       core.info(`Install SciTE4AutoIt3.exe exitCode: ${exitCode}!`)
       if (exitCode !== 0) {
