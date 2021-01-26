@@ -26,7 +26,7 @@ async function run(): Promise<void> {
       )
     }
     const installedLocation = String.raw`${installation_location}\AutoIt3`
-    const cacheKey = `autoit-v3-${process.platform}-${installedLocation}`
+    const cacheKey = `autoit-v3.3-${process.platform}-${installedLocation}`
     core.info(`cache.restoreCache([${installedLocation}], ${cacheKey})`)
     const restoreCode = await cache.restoreCache([installedLocation], cacheKey)
     if (restoreCode) {
@@ -79,6 +79,10 @@ async function run(): Promise<void> {
       )
       core.info(`Got download achieve: ${au3StripperAchieve}!`)
       core.info('Starting autoIt install!')
+      await fs.rmdir(
+        String.raw`C:\Program Files (x86)\AutoIt3\SciTE\au3Stripper`,
+        {recursive: true}
+      )
       await tc.extractZip(
         au3StripperAchieve,
         String.raw`C:\Program Files (x86)\AutoIt3\SciTE\au3Stripper`
