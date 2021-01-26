@@ -39,6 +39,18 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const cache = __importStar(__webpack_require__(7799));
 const core = __importStar(__webpack_require__(2186));
 const tc = __importStar(__webpack_require__(7784));
+const exec_1 = __webpack_require__(1514);
+function install(url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        core.info(`Begin install program from ${url}!`);
+        const program = yield tc.downloadTool(url);
+        core.info(`Got download achieve: ${program}!`);
+        core.info('Starting install!');
+        const exitCode = yield exec_1.exec(program, [`/S`, `/f`]);
+        core.info(`install exitCode: ${exitCode}!`);
+        return exitCode;
+    });
+}
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -49,7 +61,7 @@ function run() {
                 return core.setFailed(`${process.platform} is not support, only windows is support!`);
             }
             const installedLocation = String.raw `${installation_location}\AutoIt3`;
-            const cacheKey = `${process.platform}-autoit-3-${installedLocation}`;
+            const cacheKey = `autoit-3-${process.platform}-${installedLocation}`;
             core.info(`cache.restoreCache([${installedLocation}], ${cacheKey})`);
             const restoreCode = yield cache.restoreCache([installedLocation], cacheKey);
             if (restoreCode) {
@@ -57,12 +69,14 @@ function run() {
             }
             else {
                 core.info(`cache.restoreCache miss!`);
-                // extract the prepared autoit achieve (resources\AutoIt3.zip)
-                // download the achieve
-                const autoIt3Achieve = yield tc.downloadTool('https://github.com/liudonghua123/action-setup-autoit/raw/main/resources/AutoIt3.zip');
-                core.info(`Got download achieve: ${autoIt3Achieve}!`);
-                core.info('Starting autoIt install!');
-                yield tc.extractZip(autoIt3Achieve, installation_location);
+                // // extract the prepared autoit achieve (resources\AutoIt3.zip)
+                // // download the achieve
+                // const autoIt3Achieve = await tc.downloadTool(
+                //   'https://github.com/liudonghua123/action-setup-autoit/raw/main/resources/AutoIt3.zip'
+                // )
+                // core.info(`Got download achieve: ${autoIt3Achieve}!`)
+                // core.info('Starting autoIt install!')
+                // await tc.extractZip(autoIt3Achieve, installation_location)
                 // const exitCode = await exec(String.raw`"C:\Program Files\7-Zip\7z.exe"`, [
                 //   `x`,
                 //   String.raw`resources\AutoIt3.zip`,
@@ -72,6 +86,18 @@ function run() {
                 // if (exitCode !== 0) {
                 //   return core.setFailed(`extract AutoIt3.zip failed!`)
                 // }
+                core.info(`Install autoit-v3-setup.exe sliently`);
+                let exitCode = yield install('https://www.autoitscript.com/files/autoit3/autoit-v3-setup.exe');
+                core.info(`Install autoit-v3-setup.exe exitCode: ${exitCode}!`);
+                if (exitCode !== 0) {
+                    return core.setFailed(`Install autoit-v3-setup.exe failed with ${exitCode}`);
+                }
+                core.info(`Install SciTE4AutoIt3.exe sliently`);
+                exitCode = yield install('https://www.autoitscript.com/autoit3/scite/download/SciTE4AutoIt3.exe');
+                core.info(`Install SciTE4AutoIt3.exe exitCode: ${exitCode}!`);
+                if (exitCode !== 0) {
+                    return core.setFailed(`Install SciTE4AutoIt3.exe failed with ${exitCode}`);
+                }
                 try {
                     core.info(`Saving cache: ${cacheKey}`);
                     core.info(`cache.saveCache([${installedLocation}], ${cacheKey})`);

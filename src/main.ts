@@ -1,6 +1,17 @@
 import * as cache from '@actions/cache'
 import * as core from '@actions/core'
 import * as tc from '@actions/tool-cache'
+import {exec} from '@actions/exec'
+
+async function install(url: string): Promise<number> {
+  core.info(`Begin install program from ${url}!`)
+  const program = await tc.downloadTool(url)
+  core.info(`Got download achieve: ${program}!`)
+  core.info('Starting install!')
+  const exitCode = await exec(program, [`/S`, `/f`])
+  core.info(`install exitCode: ${exitCode}!`)
+  return exitCode
+}
 
 async function run(): Promise<void> {
   try {
@@ -13,21 +24,22 @@ async function run(): Promise<void> {
       )
     }
     const installedLocation = String.raw`${installation_location}\AutoIt3`
-    const cacheKey = `${process.platform}-autoit-3-${installedLocation}`
+    const cacheKey = `autoit-3-${process.platform}-${installedLocation}`
     core.info(`cache.restoreCache([${installedLocation}], ${cacheKey})`)
     const restoreCode = await cache.restoreCache([installedLocation], cacheKey)
     if (restoreCode) {
       core.info(`cache.restoreCache hits! result: ${restoreCode}`)
     } else {
       core.info(`cache.restoreCache miss!`)
-      // extract the prepared autoit achieve (resources\AutoIt3.zip)
-      // download the achieve
-      const autoIt3Achieve = await tc.downloadTool(
-        'https://github.com/liudonghua123/action-setup-autoit/raw/main/resources/AutoIt3.zip'
-      )
-      core.info(`Got download achieve: ${autoIt3Achieve}!`)
-      core.info('Starting autoIt install!')
-      await tc.extractZip(autoIt3Achieve, installation_location)
+      // // extract the prepared autoit achieve (resources\AutoIt3.zip)
+      // // download the achieve
+      // const autoIt3Achieve = await tc.downloadTool(
+      //   'https://github.com/liudonghua123/action-setup-autoit/raw/main/resources/AutoIt3.zip'
+      // )
+      // core.info(`Got download achieve: ${autoIt3Achieve}!`)
+      // core.info('Starting autoIt install!')
+      // await tc.extractZip(autoIt3Achieve, installation_location)
+
       // const exitCode = await exec(String.raw`"C:\Program Files\7-Zip\7z.exe"`, [
       //   `x`,
       //   String.raw`resources\AutoIt3.zip`,
@@ -37,6 +49,27 @@ async function run(): Promise<void> {
       // if (exitCode !== 0) {
       //   return core.setFailed(`extract AutoIt3.zip failed!`)
       // }
+      core.info(`Install autoit-v3-setup.exe sliently`)
+      let exitCode = await install(
+        'https://www.autoitscript.com/files/autoit3/autoit-v3-setup.exe'
+      )
+      core.info(`Install autoit-v3-setup.exe exitCode: ${exitCode}!`)
+      if (exitCode !== 0) {
+        return core.setFailed(
+          `Install autoit-v3-setup.exe failed with ${exitCode}`
+        )
+      }
+      core.info(`Install SciTE4AutoIt3.exe sliently`)
+      exitCode = await install(
+        'https://www.autoitscript.com/autoit3/scite/download/SciTE4AutoIt3.exe'
+      )
+      core.info(`Install SciTE4AutoIt3.exe exitCode: ${exitCode}!`)
+      if (exitCode !== 0) {
+        return core.setFailed(
+          `Install SciTE4AutoIt3.exe failed with ${exitCode}`
+        )
+      }
+
       try {
         core.info(`Saving cache: ${cacheKey}`)
         core.info(`cache.saveCache([${installedLocation}], ${cacheKey})`)
