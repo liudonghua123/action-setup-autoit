@@ -25,4 +25,5 @@ jobs:
         run: |
             echo %PATH%
             dir "C:\Program Files (x86)\AutoIt3"
+            dir "C:\Program Files (x86)\AutoIt3\SciTE\au3Stripper"
       

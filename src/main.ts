@@ -26,7 +26,7 @@ async function run(): Promise<void> {
       )
     }
     const installedLocation = String.raw`${installation_location}\AutoIt3`
-    const cacheKey = `autoit-3-${process.platform}-${installedLocation}`
+    const cacheKey = `autoit-v3-${process.platform}-${installedLocation}`
     core.info(`cache.restoreCache([${installedLocation}], ${cacheKey})`)
     const restoreCode = await cache.restoreCache([installedLocation], cacheKey)
     if (restoreCode) {
@@ -73,6 +73,16 @@ async function run(): Promise<void> {
           `Install SciTE4AutoIt3.exe failed with ${exitCode}`
         )
       }
+      // try to fix Au3Stripper.dat missing... Please get it from the website to make sure the Au3Stripper will work correctly.
+      const au3StripperAchieve = await tc.downloadTool(
+        'https://www.autoitscript.com/autoit3/scite/download/Au3Stripper.zip'
+      )
+      core.info(`Got download achieve: ${au3StripperAchieve}!`)
+      core.info('Starting autoIt install!')
+      await tc.extractZip(
+        au3StripperAchieve,
+        String.raw`C:\Program Files (x86)\AutoIt3\SciTE\au3Stripper`
+      )
 
       try {
         core.info(`Saving cache: ${cacheKey}`)
